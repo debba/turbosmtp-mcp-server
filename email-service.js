@@ -18,7 +18,7 @@ class EmailService {
         subject,
         content: text || '', 
         html_content: html || '', 
-        from: from || process.env.TURBOSMTP_FROM_EMAIL || process.env.TURBOSMTP_CONSUMER_KEY
+        from: from || process.env.TURBOSMTP_FROM_EMAIL
       };
 
       const response = await axios.post(
