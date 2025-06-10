@@ -1,0 +1,26 @@
+{
+  "name": "mcp-turbosmtp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for sending emails via turboSMTP",
+  "type": "module",
+  "main": "mcp-turbosmtp-server.js",
+  "scripts": {
+    "start": "node mcp-turbosmtp-server.js",
+    "dev": "nodemon mcp-turbosmtp-server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "email",
+    "turbosmtp"
+  ],
+  "author": "debba",
+  "license": "MIT"
+}
