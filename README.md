@@ -1,6 +1,6 @@
 # turbosmtp-mcp-server
 
-A simple Node.js MCP (Model Context Protocol) server for sending emails using TurboSMTP, designed for easy integration and testing. This server exposes an MCP-compatible API endpoint to allow other services to send emails via TurboSMTP.
+A simple Node.js MCP (Model Context Protocol) server for sending emails and view statistics using TurboSMTP, designed for easy integration and testing. This server exposes an MCP-compatible API endpoint to allow other services to send emails via TurboSMTP.
 
 <a href="https://glama.ai/mcp/servers/@debba/turbosmtp-mcp-server">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@debba/turbosmtp-mcp-server/badge" alt="turbosmtp MCP server" />
@@ -8,7 +8,7 @@ A simple Node.js MCP (Model Context Protocol) server for sending emails using Tu
 
 ## Features
 
-- Send emails via TurboSMTP with a simple MCP API
+- Send emails and check statistics via TurboSMTP with a simple MCP API
 - Easy configuration and setup
 - Includes a test script for quick validation
 
@@ -54,7 +54,7 @@ Edit `test-email.js` to set the recipient and message details.
 
 - `mcp-turbosmtp-server.js` — Main MCP server file
 - `email-service.js` — Email sending logic using TurboSMTP
-- `test-email.js` — Script to send a test email
+- `tests.js` — Script to test turboSMTP features via API
 - `package.json` — Project dependencies and scripts
 
 ## License

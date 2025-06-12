@@ -68,6 +68,59 @@ class TurboSMTPMCPServer {
               properties: {},
               additionalProperties: false
             }
+          },
+          {
+            name: 'get_analytics_data',
+            description: 'Retrieve analytics data from TurboSMTP for a specific date range',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                from: {
+                  type: 'string',
+                  description: 'Start date for analytics (format: YYYY-MM-DD)',
+                  pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+                },
+                to: {
+                  type: 'string',
+                  description: 'End date for analytics (format: YYYY-MM-DD)',
+                  pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+                },
+                page: {
+                  type: 'number',
+                  description: 'Page number (optional)',
+                  minimum: 1
+                },
+                limit: {
+                  type: 'number',
+                  description: 'Number of results per page (optional)',
+                  minimum: 1,
+                  maximum: 100
+                },
+                tz: {
+                  type: 'string',
+                  description: 'Timezone (optional, e.g., "Europe/Rome", "America/New_York")'
+                },
+                filter: {
+                  type: 'string',
+                  description: 'Filter for analytics data (optional)'
+                }
+              },
+              required: ['from', 'to']
+            }
+          },
+          {
+            name: 'get_analytics_data_by_id',
+            description: 'Retrieve analytics data from TurboSMTP by specific message ID',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'string',
+                  description: 'Message ID'
+                }
+              },
+              required: ['id']
+            }
           }
         ]
       };
@@ -85,6 +138,12 @@ class TurboSMTPMCPServer {
           case 'validate_email_config':
             return await this.handleValidateConfig();
           
+          case 'get_analytics_data':
+            return await this.handleGetAnalyticsData(args);
+
+          case 'get_analytics_data_by_id':
+            return await this.handleGetAnalyticsDataById(args);
+
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -166,6 +225,100 @@ class TurboSMTPMCPServer {
       };
     } catch (error) {
       throw new Error(`Invalid configuration: ${error.message}`);
+    }
+  }
+
+  async handleGetAnalyticsDataById(args) {
+    const { id } = args;
+
+    if (!id) {
+      throw new Error('The "id" parameter is required');
+    }
+
+    try {
+      const result = await EmailService.getAnalyticsDataById(id);
+
+      // Format the analytics data for better readability
+      let formattedOutput = `📊 Analytics Data Retrieved Successfully!\n\n`;
+      formattedOutput += `\n📈 Analytics Summary:\n`;
+      formattedOutput += `${JSON.stringify(result.data, null, 2)}`;
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: formattedOutput
+          }
+        ]
+      };
+    } catch (error) {
+      throw new Error(`Error retrieving analytics data: ${error.message}`);
+    }
+  }
+
+  async handleGetAnalyticsData(args) {
+    const { from, to, page, limit, tz, filter } = args;
+
+    // Date format validation
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    
+    if (!from || !dateRegex.test(from)) {
+      throw new Error('The "from" parameter is required and must be in YYYY-MM-DD format');
+    }
+
+    if (!to || !dateRegex.test(to)) {
+      throw new Error('The "to" parameter is required and must be in YYYY-MM-DD format');
+    }
+
+    // Validate date logic
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    
+    if (fromDate > toDate) {
+      throw new Error('The "from" date must be before or equal to the "to" date');
+    }
+
+    // Validate optional parameters
+    if (page !== undefined && (!Number.isInteger(page) || page < 1)) {
+      throw new Error('The "page" parameter must be a positive integer');
+    }
+
+    if (limit !== undefined && (!Number.isInteger(limit) || limit < 1 || limit > 100)) {
+      throw new Error('The "limit" parameter must be an integer between 1 and 100');
+    }
+
+    try {
+      const result = await EmailService.getAnalyticsData({
+        from,
+        to,
+        page,
+        limit,
+        tz,
+        filter
+      });
+
+      // Format the analytics data for better readability
+      let formattedOutput = `📊 Analytics Data Retrieved Successfully!\n\n`;
+      formattedOutput += `Date Range: ${from} to ${to}\n`;
+      
+      if (page) formattedOutput += `Page: ${page}\n`;
+      if (limit) formattedOutput += `Results per page: ${limit}\n`;
+      if (tz) formattedOutput += `Timezone: ${tz}\n`;
+      if (filter) formattedOutput += `Filter: ${filter}\n`;
+      
+      formattedOutput += `\n📈 Analytics Summary:\n`;
+      formattedOutput += `${JSON.stringify(result.data, null, 2)}`;
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: formattedOutput
+          }
+        ]
+      };
+    } catch (error) {
+      throw new Error(`Error retrieving analytics data: ${error.message}`);
     }
   }
 
