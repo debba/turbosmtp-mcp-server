@@ -45,10 +45,10 @@ The server will start and expose an MCP API endpoint for sending emails.
 You can use the provided test script:
 
 ```bash
-node test-email.js
+node tests.js
 ```
 
-Edit `test-email.js` to set the recipient and message details.
+Edit `tests.js` to set the recipient and message details.
 
 ## Project Structure
 
