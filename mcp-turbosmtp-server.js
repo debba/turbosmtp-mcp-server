@@ -61,15 +61,6 @@ class TurboSMTPMCPServer {
             }
           },
           {
-            name: 'validate_email_config',
-            description: 'Validate TurboSMTP configuration',
-            inputSchema: {
-              type: 'object',
-              properties: {},
-              additionalProperties: false
-            }
-          },
-          {
             name: 'get_analytics_data',
             description: 'Retrieve analytics data from TurboSMTP for a specific date range',
             inputSchema: {
@@ -134,10 +125,6 @@ class TurboSMTPMCPServer {
         switch (name) {
           case 'send_email':
             return await this.handleSendEmail(args);
-          
-          case 'validate_email_config':
-            return await this.handleValidateConfig();
-          
           case 'get_analytics_data':
             return await this.handleGetAnalyticsData(args);
 
@@ -208,23 +195,6 @@ class TurboSMTPMCPServer {
       };
     } catch (error) {
       throw new Error(`Error sending email: ${error.message}`);
-    }
-  }
-
-  async handleValidateConfig() {
-    try {
-      await EmailService.validateConfiguration();
-      
-      return {
-        content: [
-          {
-            type: 'text',
-            text: '✅ TurboSMTP configuration is valid!\n\nConfigured variables:\n- TURBOSMTP_CONSUMER_KEY: ✓\n- TURBOSMTP_CONSUMER_SECRET: ✓'
-          }
-        ]
-      };
-    } catch (error) {
-      throw new Error(`Invalid configuration: ${error.message}`);
     }
   }
 
